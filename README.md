@@ -27,6 +27,21 @@ This project contains the automated test suites for the web-based ticketing syst
      ```
    - Update the values in `.env` with your actual test environment credentials and URLs.
 
+## CI/CD Pipeline (GitHub Actions)
+The project includes a GitHub Actions workflow that automatically runs your tests on every push.
+
+### Setting up GitHub Secrets
+To make the pipeline work, you must add the following **Secrets** to your GitHub Repository (`Settings > Secrets and variables > Actions`):
+
+| Secret Name | Description |
+|-------------|-------------|
+| `APP_URL` | The base URL of your web application |
+| `API_BASE_URL` | The base URL of your API |
+| `ADMIN_EMAIL` | Admin user email for testing |
+| `ADMIN_PASSWORD` | Admin user password |
+| `AGENT_EMAIL` | Agent user email |
+| `AGENT_PASSWORD` | Agent user password |
+
 ## Running Tests
 
 ### 1. End-to-End Tests (Playwright)
