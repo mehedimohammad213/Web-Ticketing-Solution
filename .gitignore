@@ -8,3 +8,5 @@ playwright/.cache/
 dist/
 *.log
 diagnostic-tests/
+
+diagonist/
