@@ -24,4 +24,11 @@ export class LoginPage {
         await this.passwordInput.fill(password);
         await this.loginButton.click();
     }
+
+    /**
+     * Returns the locator for the error message displayed after a failed login.
+     */
+    getErrorMessage() {
+        return this.errorMessage;
+    }
 }

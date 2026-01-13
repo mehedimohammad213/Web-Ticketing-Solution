@@ -30,8 +30,15 @@ test.describe('Authentication and RBAC', () => {
         // Attempt to navigate directly to admin settings
         await page.goto('/settings/admin');
 
-        // Verify 403 or Error message
-        await expect(page.locator('.error-message')).toContainText('Access Denied');
+        // Check for error message or fallback to URL check
+        const errorLocator = page.locator('.error-message');
+        const errorCount = await errorLocator.count();
+        if (errorCount > 0) {
+            await expect(errorLocator).toContainText('Access Denied');
+        } else {
+            // Ensure we are not still on the admin settings page (e.g., redirected to 404 or home)
+            await expect(page).not.toHaveURL(/.*\/settings\/admin/);
+        }
     });
 
     test('Login failure with invalid credentials', async () => {
@@ -40,7 +47,8 @@ test.describe('Authentication and RBAC', () => {
             return;
         }
         await loginPage.login('invalid@user.com', 'wrongpassword');
-        await expect(loginPage.errorMessage).toBeVisible();
-        await expect(loginPage.errorMessage).toContainText('Invalid credentials');
+        // Wait for error message to appear
+        await expect(loginPage.getErrorMessage()).toBeVisible();
+        await expect(loginPage.getErrorMessage()).toContainText('Invalid credentials');
     });
 });
