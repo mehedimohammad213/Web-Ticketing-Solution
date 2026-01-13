@@ -7,3 +7,4 @@ blob-report/
 playwright/.cache/
 dist/
 *.log
+diagnostic-tests/screenshots/
