@@ -1,8 +1,9 @@
 node_modules/
 .env
-tests/test-results/
-tests/playwright-report/
-tests/blob-report/
-tests/playwright/.cache/
+test-results/
+playwright-report/
+allure-results/
+blob-report/
+playwright/.cache/
 dist/
 *.log
