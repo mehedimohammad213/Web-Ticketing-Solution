@@ -1,11 +1,10 @@
 node_modules/
 .env
-test-results/
-playwright-report/
-allure-results/
+# test-results/
+# playwright-report/
+# allure-results/
 blob-report/
 playwright/.cache/
 dist/
 *.log
-diagnostic-tests/screenshots/
-diagnostic-tests/
+# tests/diagnostic/screenshots/
