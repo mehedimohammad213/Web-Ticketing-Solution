@@ -71,6 +71,24 @@ Or use the npm script (uses defaults in script):
 npm run test:perf
 ```
 
+## Test Reporting
+The project generates professional, visual reports for all test suites.
+
+### 1. Unified E2E Dashboard (Allure)
+- **Local:** `npx allure serve allure-results`
+- **CI:** Download `allure-results` from GitHub Actions, or view the basic `playwright-report` HTML artifact.
+
+### 2. API Test Report (HTML)
+- **File:** `reports/api-test-report.html`
+- Generated automatically after running `npm run test:api`.
+
+### 3. Performance Summary (HTML)
+- **File:** `reports/performance-report.html`
+- Generated automatically after running `npm run test:perf`.
+
+### Viewing CI Reports
+All reports are uploaded as **Artifacts** on every GitHub Actions run. You can find them at the bottom of the Summary page for any specific run.
+
 ## Directory Structure
 - `e2e/`: Contains Playwright tests and Page Objects.
 - `api/`: Contains Jest/Supertest API tests.
