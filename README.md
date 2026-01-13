@@ -2,6 +2,8 @@
 
 This project contains the automated test suites for the web-based ticketing system, covering E2E, API, and Performance testing.
 
+> **Note:** For the detailed Quality Assurance Strategy, including prioritization, test plans, and security/compliance details, please refer to the [QA Strategy Document](./QA_STRATEGY.md).
+
 ## Prerequisites
 - **Node.js**: v18 or higher
 - **npm**: v9 or higher
