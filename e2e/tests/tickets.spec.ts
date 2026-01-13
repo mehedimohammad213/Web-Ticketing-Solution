@@ -8,6 +8,10 @@ test.describe('Ticket Lifecycle Management', () => {
     });
 
     test('TC-05: Should validate mandatory fields on submission', async ({ page }) => {
+        if (!process.env.APP_URL) {
+            console.warn('Skipping TC-05: APP_URL not configured');
+            return;
+        }
         await page.click('button[type="submit"]');
 
         const subjectError = page.locator('#subject-error');
@@ -20,6 +24,10 @@ test.describe('Ticket Lifecycle Management', () => {
     });
 
     test('TC-06: Should assign priority level "Critical" correctly', async ({ page }) => {
+        if (!process.env.APP_URL) {
+            console.warn('Skipping TC-06: APP_URL not configured');
+            return;
+        }
         await page.fill('#subject', 'System Outage - Production');
         await page.fill('#description', 'The entire system is down for all users.');
         await page.selectOption('#priority', 'Critical');

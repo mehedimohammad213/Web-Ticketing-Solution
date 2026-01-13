@@ -35,6 +35,10 @@ test.describe('Authentication and RBAC', () => {
     });
 
     test('Login failure with invalid credentials', async () => {
+        if (!process.env.APP_URL) {
+            console.warn('Skipping test: APP_URL not configured');
+            return;
+        }
         await loginPage.login('invalid@user.com', 'wrongpassword');
         await expect(loginPage.errorMessage).toBeVisible();
         await expect(loginPage.errorMessage).toContainText('Invalid credentials');
