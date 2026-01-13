@@ -11,6 +11,15 @@
       "node",
       "jest",
       "@playwright/test"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@tests/*": [
+        "tests/*"
+      ]
+    }
   }
 }

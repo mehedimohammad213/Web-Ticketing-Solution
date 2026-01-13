@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { TicketPage } from '../pages/TicketPage';
-import { LoginPage } from '../pages/LoginPage';
+import { TicketPage } from '@/pages/TicketPage';
+import { LoginPage } from '@/pages/LoginPage';
 
 test.describe('Automated Ticket Routing', () => {
     let ticketPage: TicketPage;
