@@ -1,109 +1,110 @@
-# QA Strategy for Web Ticketing Solution
+# 🛡️ QA Strategy: Web Ticketing System
 
-## 1. Test Plan Development
+This document explains **how** and **why** we test our application. Our goal is to catch bugs *before* our users do.
 
-### Scope
-- **Functional Testing:** Auth, Ticket Lifecycle, Routing, Search, Admin Panel.
-- **Non-Functional Testing:** UX, Browser Compatibility, Mobile Responsiveness.
-- **Performance Testing:** Load, Stress, Scalability.
-- **Security Testing:** RBAC, Data Protection, Compliance.
+---
 
-### Prioritization Strategy
-1.  **Critical Path (P0):** Login, Ticket Creation, Agent Reply, Ticket Closure. (Must work or block release).
-2.  **High Priority (P1):** Routing Rules, SLA Escalations, Role Permissions.
-3.  **Medium Priority (P2):** Search filters, Reports, Custom fields.
-4.  **Low Priority (P3):** UI Polish, Edge case workflows.
+## 1. 🎯 Strategy Overview
 
-## 2. Test Case Design (Detailed)
+We don't just "test everything." We focus on what matters most to the user.
 
-### Feature 1: User Authentication & Role Management
-| TC ID | Description | Expected Result | Priority |
-|-------|-------------|-----------------|----------|
-| AUTH-01 | Admin login with valid credentials | Redirect to Admin Dashboard | P0 |
-| AUTH-02 | Customer login with valid credentials | Redirect to Customer Portal | P0 |
-| AUTH-03 | Agent login with valid credentials | Redirect to Ticket Dashboard | P0 |
-| AUTH-04 | Agent attempts to access Admin Settings | Access Denied / 403 Forbidden | P1 |
-| AUTH-05 | Invalid Password (3 attempts) | Account Lockout or Captcha | P2 |
+### What We Test (Scope)
+*   **Functional**: Does the login work? Can I create a ticket? (The buttons and logic).
+*   **Non-Functional**: Does it look good on mobile? Is it easy to use?
+*   **Performance**: Does the site crash if 1000 people use it at once?
+*   **Security**: Is user data safe? Can regular users see Admin pages? (They shouldn't!).
 
-### Feature 2: Ticket Creation & Submission
-| TC ID | Description | Expected Result | Priority |
-|-------|-------------|-----------------|----------|
-| TKT-01 | Customer creates "Critical" Issue | Ticket created, tagged "Critical" | P0 |
-| TKT-02 | Customer fails to fill mandatory fields | Validation Error displayed | P1 |
-| TKT-03 | Customer attaches file > 10MB | Upload rejected (Size limit) | P2 |
-| TKT-04 | Custom field "OS Version" selection | Saved correctly in DB | P2 |
+### Priority Levels (What to fix first)
+We use a **P0 - P3** scale to decide what is urgent.
 
-### Feature 3: Automated Ticket Routing & Escalation
-| TC ID | Description | Expected Result | Priority |
-|-------|-------------|-----------------|----------|
-| ROUT-01 | Ticket Subject contains "Billing" | Auto-assign to Finance Team | P1 |
-| ROUT-02 | Ticket Priority "High" & Type "Incindent" | Auto-assign to L2 Support | P1 |
-| SLA-01 | Ticket unassigned for > 1 hour (Critical) | Escalate to Manager Queue | P1 |
-| SLA-02 | Agent response time > 4 hours (Standard) | Send Warning Notification | P2 |
+| Priority | Meaning | Example |
+| :--- | :--- | :--- |
+| **P0 (Critical)** | **"Stop the Ship!"** The app is broken. We cannot release. | Login fails; Database is down. |
+| **P1 (High)** | **"Must Fix"**. Major feature is broken, but there's a workaround. | Reset Password email not sending. |
+| **P2 (Medium)** | **"Fix Soon"**. Annoying bugs, but users can still do their job. | Search is slow; Typo in a label. |
+| **P3 (Low)** | **"Polish"**. Visual glitches or "nice to have" improvements. | Button color is slightly off. |
 
-## 3. Automation Strategy
+---
 
-### Tools & Frameworks
--   **E2E / Functional:** **Playwright** (TypeScript). Fast, reliable, supports multi-tab/user scenarios needed for Chat/Tickets.
--   **API Testing:** **Playwright API** capabilities or **Supertest**.
--   **Performance:** **k6** or **JMeter**.
--   **CI/CD:** GitHub Actions (Run on PR merge).
+## 2. 🧪 Test Case Design
 
-### Automation Scope
--   **Automate:** All P0 and P1 Regression tests. Smoke tests for every build. Data setup/teardown.
--   **Manual:** Explaratory testing, UI/UX nuances, complex one-off edge cases.
+We write test cases to prove the software works. Here is how we structure them.
 
-## 4. Security & Compliance Testing
+### Feature: User Authentication (Login)
+*Why? If users can't login, they can't use the app.*
 
-### Plan
--   **GDPR:** Verify "Right to be Forgotten" (User deletion anonymizes data). Verify "Data Export".
--   **HIPAA:** Ensure PHI (if any) is encrypted at rest and in transit (TLS 1.2+).
--   **Access Control:** Verify Broken Access Control (IDOR) - User A cannot view User B resolution.
+| ID | Test Scenario | Expected Result | Priority |
+| :--- | :--- | :--- | :--- |
+| **AUTH-01** | Admin logs in with correct password | Redirected to **Admin Dashboard** | **P0** |
+| **AUTH-02** | Customer logs in with correct password | Redirected to **User Portal** | **P0** |
+| **AUTH-03** | Agent tries to access Admin page | **Access Denied** (Security Check) | **P1** |
+| **AUTH-04** | Invalid password entered 3 times | Account locked for 15 mins | **P2** |
 
-### Security Test Cases
--   **SEC-01:** Verify SQL Injection on Login and Search.
--   **SEC-02:** Verify XSS on Ticket Description (Rich Text Editor).
--   **SEC-03:** Verify MFA enforcement for Admin accounts.
--   **SEC-04:** Check secure cookie flags (HttpOnly, Secure).
+### Feature: Ticket Workflow
+*Why? This is the core purpose of our app.*
 
-## 5. Performance Testing
+| ID | Test Scenario | Expected Result | Priority |
+| :--- | :--- | :--- | :--- |
+| **TKT-01** | Create "Critical" ticket | Ticket created & tagged red | **P0** |
+| **TKT-02** | Attach a file larger than 10MB | Error: "File too large" | **P2** |
+| **SLA-01** | Ticket ignored for 1 hour | Auto-escalate to Manager | **P1** |
 
-### Approach
--   **Baseline:** Measure response time with 10 concurrent users.
--   **Load:** Ramp up to 1000 concurrent users over 10 minutes.
--   **Stress:** Push beyond predicted max until failure to find "breaking point".
+---
 
-### Metrics
--   **Response Time:** Target < 200ms for API, < 1s for Page Load.
--   **Throughput:** Requests per Second (RPS).
--   **Error Rate:** Should be < 1%.
+## 3. 🤖 Automation Strategy
 
-## 6. Bug Reporting (Sample)
+We automate the "boring" repetitive stuff so humans can focus on the complex stuff.
 
-**Title:** [Critical] Ticket Routing Fails for "Billing" Category
-**Severity:** Critical (P0)
-**Priority:** Immediate
-**Environment:** Staging v2.1.0, Chrome 114
+### What do we Automate?
+*   ✅ **Regression Tests**: Things that *used* to work (to make sure we didn't break them).
+*   ✅ **Smoke Tests**: A quick "pulse check" to see if the app even turns on.
+*   ✅ **API Tests**: Checking data accuracy behind the scenes.
 
-**Description:**
-Tickets created with category "Billing" are landing in the "Unassigned" general queue instead of the "Finance Team" queue, causing SLA breaches.
+### Tools We Use
+*   **Playwright**: For clicking buttons and filling forms automatically (E2E).
+*   **Jest / Supertest**: For testing the API directly.
+*   **k6**: For simulating thousands of users (Load Testing).
 
-**Steps to Reproduce:**
-1.  Login as Customer.
-2.  Navigate to "New Ticket".
-3.  Select Category: "Billing".
-4.  Submit Ticket (ID: #12345).
-5.  Login as Admin.
-6.  Check "Finance Team" queue.
+---
 
-**Expected Result:** Ticket #12345 should appear in "Finance Team" queue.
-**Actual Result:** Ticket #12345 appears in "Unassigned" queue.
+## 4. 🔒 Security & Compliance
 
-## 7. Collaboration & Process
--   **Shift-Left:** QA joins design reviews to flag untestable requirements early.
--   **Exec Sync:** Weekly Quality Reports (Pass/Fail rates, open critical bugs).
--   **Critical Bug Pre-Launch:**
-    1.  Immediately convene "War Room" (Dev + PMS + QA).
-    2.  Assess Impact: Can we hotfix? Can we feature flip?
-    3.  Decision: **Delay Launch** if P0 functionality is broken. No broken windows.
-    4.  Retrospective: Why was this found late?
+We have to keep user data safe. It's the law!
+
+*   **GDPR (Privacy)**: Users must be able to delete their account ("Right to be Forgotten").
+*   **Access Control**: User A should **never** see User B's tickets.
+*   **Injection Attacks**: We test putting "hacker code" into input fields to make sure the app blocks it.
+
+---
+
+## 5. 🐛 How to Report a Bug
+
+Found a bug? Great catch! Here is how to report it so a developer can fix it easily.
+
+### 📝 Bug Report Template
+
+**Title**: `[P0] Ticket Routing fails for "Billing" Category`
+*(Short and scary if it's important)*
+
+**Description**:
+When a user selects "Billing", the ticket should go to Finance. Instead, it goes to "Unassigned".
+
+**Steps to Reproduce (The most important part!):**
+1.  Login as **Customer User**.
+2.  Click **"New Ticket"**.
+3.  Select Category: **"Billing"**.
+4.  Submit.
+5.  Login as **Admin** and check the "Finance" queue.
+
+**Expected Result**: Ticket is in Finance Queue.
+**Actual Result**: Ticket is lost in specific queue.
+
+---
+
+## 6. 🤝 Team Process
+
+Quality is everyone's job, not just QA's.
+
+1.  **Shift Left**: QA talks to designers *before* code is written to find logic holes early.
+2.  **No Broken Windows**: We don't release with known P0 bugs. Ever.
+3.  **War Room**: If a P0 is found before launch, Devs and QAs sit together until it's fixed.
