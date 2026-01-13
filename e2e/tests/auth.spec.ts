@@ -10,6 +10,10 @@ test.describe('Authentication and RBAC', () => {
     });
 
     test('TC-01: Admin should login successfully', async ({ page }) => {
+        if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+            console.warn('Skipping TC-01: ADMIN credentials missing');
+            return;
+        }
         await loginPage.login(process.env.ADMIN_EMAIL!, process.env.ADMIN_PASSWORD!);
         // Verify redirection to admin dashboard
         await expect(page).toHaveURL(/.*dashboard/);
@@ -17,6 +21,10 @@ test.describe('Authentication and RBAC', () => {
     });
 
     test('TC-04: Agent should be denied access to Admin settings', async ({ page }) => {
+        if (!process.env.AGENT_EMAIL || !process.env.AGENT_PASSWORD) {
+            console.warn('Skipping TC-04: AGENT credentials missing');
+            return;
+        }
         await loginPage.login(process.env.AGENT_EMAIL!, process.env.AGENT_PASSWORD!);
 
         // Attempt to navigate directly to admin settings
